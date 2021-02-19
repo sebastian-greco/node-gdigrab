@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "coroutine": "cpp",
+        "resumable": "cpp",
+        "memory": "cpp",
+        "xmemory": "cpp",
+        "functional": "cpp"
+    }
+}
