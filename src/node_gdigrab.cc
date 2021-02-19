@@ -4,21 +4,6 @@ using namespace Napi;
 
 NodeGdigrab::NodeGdigrab(const Napi::CallbackInfo& info) : ObjectWrap(info) {
     Napi::Env env = info.Env();
-
-    if (info.Length() < 1) {
-        Napi::TypeError::New(env, "Wrong number of arguments")
-          .ThrowAsJavaScriptException();
-        return;
-    }
-
-    if (!info[0].IsString()) {
-        Napi::TypeError::New(env, "You need to name yourself")
-          .ThrowAsJavaScriptException();
-        return;
-    }
-
-    this->_greeterName = info[0].As<Napi::String>().Utf8Value();
-    // Isolate* isolate = args.GetIsolate();
 		
 		this->hScreen = GetDC(0);
 		this->hdcMem = CreateCompatibleDC(hScreen);
@@ -37,10 +22,6 @@ Napi::Value NodeGdigrab::Grab(const Napi::CallbackInfo& info) {
 
     HGDIOBJ hOld = SelectObject(this->hdcMem, this->hBitmap);
     
-		
-    // SetStretchBltMode(this->hdcMem,HALFTONE);
-		// BitBlt(hdcMem, 0, 0, ScreenX, ScreenY, hScreen, OffsetX, OffsetY, SRCCOPY);
-		// StretchBlt(this->hdcMem, 0, 0, this->scaleX, this->scaleY, this->hScreen, this->offsetX, this->offsetY, this->screenX, this->screenY, SRCCOPY);
 		BitBlt(this->hdcMem, 0, 0, this->screenX, this->screenY, this->hScreen, this->offsetX, this->offsetY, SRCCOPY);
 		SelectObject(this->hdcMem, hOld);
 
@@ -78,7 +59,6 @@ Napi::Value NodeGdigrab::Greet(const Napi::CallbackInfo& info) {
     Napi::String name = info[0].As<Napi::String>();
 
     printf("Hello %s\n", name.Utf8Value().c_str());
-    printf("I am %s\n", this->_greeterName.c_str());
 
     return Napi::String::New(env, this->_greeterName);
 }

@@ -7,8 +7,8 @@ interface INodeGdigrabNative
 };
 
 class NodeGdigrab {
-    constructor(name: string) {
-        this._addonInstance = new addon.NodeGdigrab(name)
+    constructor() {
+        this._addonInstance = new addon.NodeGdigrab()
     }
 
     greet (strName: string) {
