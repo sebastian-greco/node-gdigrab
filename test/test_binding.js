@@ -11,6 +11,7 @@ function testBasic()
     assert.strictEqual(instance.greet("kermit"), "mr-yeoman", "Unexpected value returned");
     
     console.log(instance.grab())
+    console.log(instance.grab())
 }
 
 function testInvalidParams()

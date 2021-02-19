@@ -20,25 +20,7 @@ NodeGdigrab::NodeGdigrab(const Napi::CallbackInfo& info) : ObjectWrap(info) {
     this->_greeterName = info[0].As<Napi::String>().Utf8Value();
     // Isolate* isolate = args.GetIsolate();
 		
-		// this->hScreen = GetDC(0);
-		// this->hdcMem = CreateCompatibleDC(hScreen);
-		// this->screenX = GetDeviceCaps(hScreen, HORZRES);
-		// this->screenY = GetDeviceCaps(hScreen, VERTRES);
-		
-    // this->scaleY = this->screenY;
-    // this->scaleX = this->screenX;
-
-    // ReleaseDC(NULL, this->hScreen);
-
-}
-
-// Napi::Buffer<char> NodeGdigrab::Grab(const Napi::CallbackInfo& info) {
-Napi::Value NodeGdigrab::Grab(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
-
-    HGDIOBJ hOld = SelectObject(this->hdcMem, this->hBitmap);
-
-    this->hScreen = GetDC(0);
+		this->hScreen = GetDC(0);
 		this->hdcMem = CreateCompatibleDC(hScreen);
 		this->screenX = GetDeviceCaps(hScreen, HORZRES);
 		this->screenY = GetDeviceCaps(hScreen, VERTRES);
@@ -47,14 +29,20 @@ Napi::Value NodeGdigrab::Grab(const Napi::CallbackInfo& info) {
     this->scaleX = this->screenX;
 
 		this->hBitmap = CreateCompatibleBitmap(this->hScreen, this->screenX, this->screenY);
+}
+
+// Napi::Buffer<char> NodeGdigrab::Grab(const Napi::CallbackInfo& info) {
+Napi::Value NodeGdigrab::Grab(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+
+    HGDIOBJ hOld = SelectObject(this->hdcMem, this->hBitmap);
+    
 		
     // SetStretchBltMode(this->hdcMem,HALFTONE);
 		// BitBlt(hdcMem, 0, 0, ScreenX, ScreenY, hScreen, OffsetX, OffsetY, SRCCOPY);
 		// StretchBlt(this->hdcMem, 0, 0, this->scaleX, this->scaleY, this->hScreen, this->offsetX, this->offsetY, this->screenX, this->screenY, SRCCOPY);
 		BitBlt(this->hdcMem, 0, 0, this->screenX, this->screenY, this->hScreen, this->offsetX, this->offsetY, SRCCOPY);
 		SelectObject(this->hdcMem, hOld);
-
-    ReleaseDC(NULL, this->hScreen);
 
 		BITMAPINFO bmi = {0};
 		bmi.bmiHeader.biSize = sizeof(bmi.bmiHeader);
