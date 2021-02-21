@@ -5,25 +5,33 @@ using namespace Napi;
 NodeGdigrab::NodeGdigrab(const Napi::CallbackInfo& info) : ObjectWrap(info) {
     Napi::Env env = info.Env();
 		
-		this->hScreen = GetDC(0);
-		this->hdcMem = CreateCompatibleDC(hScreen);
-		this->screenX = GetDeviceCaps(hScreen, HORZRES);
-		this->screenY = GetDeviceCaps(hScreen, VERTRES);
-		
-    this->scaleY = this->screenY;
-    this->scaleX = this->screenX;
+    
+}
 
-		this->hBitmap = CreateCompatibleBitmap(this->hScreen, this->screenX, this->screenY);
+void NodeGdigrab::loadThings() {
+	this->hScreen = GetDC(0);
+  this->hdcMem = CreateCompatibleDC(hScreen);
+  this->screenX = GetDeviceCaps(hScreen, HORZRES);
+  this->screenY = GetDeviceCaps(hScreen, VERTRES);
+  
+  this->scaleY = this->screenY;
+  this->scaleX = this->screenX;
+
+  this->hBitmap = CreateCompatibleBitmap(this->hScreen, this->screenX, this->screenY);
 }
 
 // Napi::Buffer<char> NodeGdigrab::Grab(const Napi::CallbackInfo& info) {
 Napi::Value NodeGdigrab::Grab(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
+    this->loadThings();
 
     HGDIOBJ hOld = SelectObject(this->hdcMem, this->hBitmap);
+
+    //std::cout << "Hello there\n";
     
 		BitBlt(this->hdcMem, 0, 0, this->screenX, this->screenY, this->hScreen, this->offsetX, this->offsetY, SRCCOPY);
 		SelectObject(this->hdcMem, hOld);
+
 
 		BITMAPINFO bmi = {0};
 		bmi.bmiHeader.biSize = sizeof(bmi.bmiHeader);
@@ -38,7 +46,12 @@ Napi::Value NodeGdigrab::Grab(const Napi::CallbackInfo& info) {
 		
 		GetDIBits(this->hdcMem, this->hBitmap, 0, this->scaleY, data, (BITMAPINFO*)&bmi, DIB_RGB_COLORS);
 
-    return Napi::Buffer<char>::New(env,data,size);
+    DeleteDC(this->hdcMem);
+    DeleteObject(this->hBitmap);
+
+    Napi::Buffer<char> buffer = Napi::Buffer<char>::Copy(env, data, size);
+    free(data);
+    return buffer;
 }
 
 Napi::Value NodeGdigrab::Greet(const Napi::CallbackInfo& info) {
@@ -71,9 +84,10 @@ Napi::Function NodeGdigrab::GetClass(Napi::Env env) {
 }
 
 NodeGdigrab::~NodeGdigrab() {
-  ReleaseDC(GetDesktopWindow(),this->hScreen);
-  DeleteDC(this->hdcMem);
-  DeleteObject(this->hBitmap);
+  //std::cout << "static destructor\n";
+  //ReleaseDC(GetDesktopWindow(),this->hScreen);
+  //DeleteDC(this->hdcMem);
+  //DeleteObject(this->hBitmap);
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {

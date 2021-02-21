@@ -5,13 +5,20 @@ assert(NodeGdigrab, "The expected module is undefined");
 
 function testBasic()
 {
-    const instance = new NodeGdigrab("mr-yeoman");
+    const instance = new NodeGdigrab();
     //console.log(instance.greet())
     assert(instance.greet, "The expected method is not defined");
     //assert.strictEqual(instance.greet("kermit"), "mr-yeoman", "Unexpected value returned");
-    
-    console.log(instance.grab())
-    console.log(instance.grab())
+    const start = Date.now();
+    const amount = 500;
+    for (let i = amount; i > 0; i--) {
+        let gdi = new NodeGdigrab();
+        console.log((gdi).grab());   
+
+        gdi = null;
+    }
+    const took = Date.now() - start;
+    console.log(`Took ${took} ms -  AVG ${took/amount}`)
 }
 
 function testInvalidParams()

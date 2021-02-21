@@ -4,6 +4,7 @@
         "resumable": "cpp",
         "memory": "cpp",
         "xmemory": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "iostream": "cpp"
     }
 }

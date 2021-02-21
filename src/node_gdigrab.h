@@ -3,6 +3,7 @@
 #include <napi.h>
 #include <memory>
 #include <Windows.h>
+#include <iostream>
 
 class NodeGdigrab : public Napi::ObjectWrap<NodeGdigrab>
 {
@@ -27,6 +28,8 @@ private:
 	int offsetY = 0;
 	int scaleX;
 	int scaleY;
+
+	void loadThings();
 
     /* struct Work {
 	  uv_work_t request;
