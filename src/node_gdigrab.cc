@@ -46,11 +46,10 @@ Napi::Value NodeGdigrab::Grab(const Napi::CallbackInfo& info) {
 		
 		GetDIBits(this->hdcMem, this->hBitmap, 0, this->scaleY, data, (BITMAPINFO*)&bmi, DIB_RGB_COLORS);
 
-    DeleteDC(this->hdcMem);
-    DeleteObject(this->hBitmap);
+    Napi::Buffer<char> buffer = Napi::Buffer<char>::Copy(env,data,size);
 
-    Napi::Buffer<char> buffer = Napi::Buffer<char>::Copy(env, data, size);
     free(data);
+
     return buffer;
 }
 
